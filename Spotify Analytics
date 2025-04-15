@@ -1,0 +1,77 @@
+-- For this project, I downloaded Spotify data.
+-- Then I created a table to insert Spotify data into.
+-- Finally, I performed analytics on the data using SQL. 
+
+-- Creating the table: 
+CREATE TABLE spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+-- Then I inserted the Spotify Data .csv into the table.
+-- Next, I explored the data using the following SQL.
+
+-- Who are the top 10 most popular artists based on average song popularity?
+SELECT 
+artist_name
+, AVG(popularity)
+FROM spotifydata
+GROUP BY artist_name
+ORDER BY AVG(popularity) DESC
+LIMIT 10;
+
+--- What are the average values for energy, danceability, and acousticness across all tracks?
+SELECT 
+ROUND (AVG(energy),3) AS avg_energy
+, ROUND (AVG(danceability),3) AS avg_danceability
+, ROUND (AVG(acousticness), 3) AS avg_acousticness
+FROM spotifydata
+WHERE track_name IS NOT NULL;
+
+-- Which artists tend to produce high-energy and low-acousticness tracks?
+SELECT 
+artist_name
+,AVG(energy) AS avg_energy
+, AVG(acousticness) AS avg_acousticness
+FROM spotifydata
+GROUP BY artist_name
+HAVING AVG(energy) > 0.75 AND AVG(acousticness) < 0.3
+ORDER BY avg_energy DESC, avg_acousticness ASC;
+
+-- What is the average duration and popularity of the songs in the dataset?
+SELECT 
+ROUND(AVG(duration_ms / 60000),3) AS avg_duration_min
+, ROUND(AVG(popularity),3) AS avg_popularity
+FROM spotifydata;
+
+-- Which key is most commonly used in popular songs?
+SELECT 
+key
+, COUNT(id) AS num_of_songs
+FROM spotifydata
+WHERE key IS NOT NULL
+GROUP BY key
+ORDER BY num_of_songs DESC;
+
+-- What is the average speechiness, acousticness and instrumentalness of the songs in the dataset
+SELECT
+ROUND(AVG(speechiness),3) AS avg_speechiness
+, ROUND(AVG(acousticness),3) AS avg_acousticness
+, ROUND(AVG(instrumentalness),3) AS avg_instrumentalness
+FROM spotifydata;
