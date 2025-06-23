@@ -1,0 +1,99 @@
+-- This project was centered around a deep dive into Lamar Jackson's 2024 Season.
+-- During this projeect, Lamar Jackson's stats were analyzed and queires were created to determine anomalies and compare him to his peers.
+-- This SQL is accompanied by a Tableau dashboard in my Tableau portfolio
+
+-- Games with 100+ rushing yards
+SELECT date
+, opp
+, result
+, score
+, rush_yds
+FROM lamar_stats
+WHERE rush_yds > 100
+;
+
+-- Games with 3+ TDs
+SELECT date
+, opp
+, result
+, score
+, SUM(pass_td + rush_td) AS total_td
+FROM lamar_stats
+GROUP BY date
+HAVING SUM(pass_td+rush_td) >= 3
+;
+
+-- Total touchdowns against each opponent
+SELECT 
+opp
+, SUM(pass_td + rush_td) AS total_td
+FROM lamar_stats
+GROUP BY opp
+ORDER BY total_td DESC
+;
+
+--Win percentage in home vs. away games
+SELECT home_game, 
+, COUNT(*) AS games_played
+, ROUND(SUM(CASE WHEN result = 'W' THEN 1 ELSE 0 END) * 1.0 / COUNT(*),3) AS win_rate
+FROM lamar_stats
+GROUP BY home_game
+;
+
+--Average Total Yards in Wins vs. Losses
+SELECT result -- 'W' or 'L'
+, ROUND(AVG(pass_yards + rush_yds), 1) AS avg_total_yards
+, ROUND(AVG(pass_td + rush_td), 2) AS avg_touchdowns
+FROM lamar_stats
+GROUP BY result
+ORDER BY result DESC
+;
+
+-- Compare Lamar’s average passing yards per game to season averages of all QBs (min. 8 games starts)
+SELECT player
+, team
+, yards_per_game
+, CASE 
+        WHEN player = 'Lamar Jackson' THEN 'Lamar'
+        ELSE 'Other'
+    END AS player_type
+FROM passing_stats
+WHERE position = 'QB'
+AND games_started > 8
+ORDER BY yards_per_game DESC
+;
+
+-- Comparing Lamar's weekly rushing total to total rushing yards
+SELECT l.week
+, l.rush_yds AS weekly_rush_yds
+, r.rush_yards AS season_rush_yds
+FROM lamar_stats l
+JOIN rushing_stats r ON r.player = 'Lamar Jackson'
+;
+
+-- Comparing rushing yard totals of the top 5 rushing QBs
+SELECT player
+, rush_yards
+, td
+FROM rushing_stats
+WHERE position = 'QB'
+ORDER BY rush_yards DESC
+LIMIT 5
+;
+
+-- Rolling 3-game average for Lamar's passing yards
+SELECT week
+, pass_yards
+, AVG(pass_yards) 
+    OVER (ORDER BY week ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS rolling_avg_pass_yds
+FROM lamar_stats
+;
+
+-- Top 5 players in total yards
+SELECT p.player
+, COALESCE(p.yards, 0) + COALESCE(r.rush_yards, 0) AS total_yards
+FROM passing_stats p
+LEFT JOIN rushing_stats r ON p.player = r.player
+ORDER BY total_yards DESC
+LIMIT 5
+;
