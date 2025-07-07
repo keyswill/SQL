@@ -28,8 +28,6 @@ SELECT
 FROM Emp_attrition
 ;
 
-## The overall attrition rate of this dataset is 16.12%.
-
 -- Department attrition rate
 SELECT 
   Department
@@ -40,9 +38,6 @@ GROUP BY Department
 ORDER BY attrition_rate_percent DESC
 ;
 
-## The department that has the highest attrition rate is Sales (20.63%).
-## The other departments attrtition rates are HR at 19.05% & R&D AT 13.84%
-
 -- Average monthly income by job role
 SELECT JobRole
 , ROUND(AVG(MonthlyIncome), 2) AS avg_monthly_income
@@ -51,8 +46,6 @@ GROUP BY JobRole
 ORDER BY avg_monthly_income DESC
 ;
 
-## The position that has the highest average monthly income, manager, makes about 6x more than than the position that makes the lowest average monthly income, sales representative
-
 -- Job satisfaction by department
 SELECT Department
     , ROUND(AVG(JobSatisfaction),2) AS department_job_satisfaction
@@ -60,8 +53,6 @@ FROM Emp_attrition
 GROUP BY Department
 ORDER BY department_job_satisfaction DESC
 ;
-
-## All departments have similar average job satisfaction ratings but the sales department has the highest job satisfaction rating
 
 -- Average tenure by attrition status
 SELECT 
@@ -75,5 +66,3 @@ SELECT
       AS avg_tenure_attrition_no
 FROM Emp_attrition
 ;
-
-## Employees that are not in the proccess of leaving have a higher average tenure than those employees that are leaving the company
