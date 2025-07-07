@@ -1,0 +1,79 @@
+IBM Attrition Insights
+
+## Overview
+This project explores IBM’s HR dataset using SQL and Tableau. The goal: identify key attrition drivers and provide visual insights for HR decision-makers.
+
+## Tools
+- **SQL** (SQLite)
+- **Tableau Public**
+- **Dataset**: [IBM HR Analytics](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset)
+
+## Key Questions Answered
+- What is the attrition rate?
+- Which departments have the highest turnover?
+- How does income and satisfaction vary across roles?
+
+## Outputs
+- SQL queries with insights
+- Tableau dashboard visualizing attrition and job satisfaction
+
+## Author
+Kiran Williams
+
+## SQL queries
+-- Overall attrition rate 
+SELECT 
+  ROUND(CAST(SUM(CASE 
+      WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100, 2) AS attrition_rate_percent
+FROM Emp_attrition
+;
+
+## The overall attrition rate of this dataset is 16.12%.
+
+-- Department attrition rate
+SELECT 
+  Department
+  , ROUND(CAST(SUM(CASE 
+      WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100, 2) AS attrition_rate_percent
+FROM Emp_attrition
+GROUP BY Department
+ORDER BY attrition_rate_percent DESC
+;
+
+## The department that has the highest attrition rate is Sales (20.63%).
+## The other departments attrtition rates are HR at 19.05% & R&D AT 13.84%
+
+-- Average monthly income by job role
+SELECT JobRole
+, ROUND(AVG(MonthlyIncome), 2) AS avg_monthly_income
+FROM Emp_attrition
+GROUP BY JobRole
+ORDER BY avg_monthly_income DESC
+;
+
+## The position that has the highest average monthly income, manager, makes about 6x more than than the position that makes the lowest average monthly income, sales representative
+
+-- Job satisfaction by department
+SELECT Department
+    , ROUND(AVG(JobSatisfaction),2) AS department_job_satisfaction
+FROM Emp_attrition
+GROUP BY Department
+ORDER BY department_job_satisfaction DESC
+;
+
+## All departments have similar average job satisfaction ratings but the sales department has the highest job satisfaction rating
+
+-- Average tenure by attrition status
+SELECT 
+  ROUND(AVG(CASE WHEN Attrition = 'Yes' 
+      THEN YearsAtCompany 
+      ELSE NULL END), 2) 
+      AS avg_tenure_attrition_yes,
+  ROUND(AVG(CASE WHEN Attrition = 'No' 
+      THEN YearsAtCompany 
+      ELSE NULL END), 2) 
+      AS avg_tenure_attrition_no
+FROM Emp_attrition
+;
+
+## Employees that are not in the proccess of leaving have a higher average tenure than those employees that are leaving the company
