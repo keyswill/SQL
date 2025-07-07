@@ -15,7 +15,7 @@ This project explores IBM’s HR dataset using SQL and Tableau. The goal: identi
 
 ## Outputs
 - SQL queries with insights
-- Tableau dashboard visualizing attrition and job satisfaction
+- Tableau dashboard visualizing attrition and job satisfaction (Link: https://public.tableau.com/views/WhatDrivesEmployeeAttrition/WhatDrivesEmployeeAttrition?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
 
 ## Author
 Kiran Williams
